@@ -13,7 +13,7 @@ export default function CardFooter({ profile }: CardFooterProps) {
       <span aria-hidden="true">|</span>
       <ExternalLink
         href={profile.githubUrl}
-        className="text-[9px] uppercase tracking-[0.2em] text-neutral-600 hover:text-neutral-950 sm:text-[10px]"
+        className="underline text-[9px] uppercase tracking-[0.2em] text-neutral-600 hover:text-neutral-950 sm:text-[10px]"
       >
         github.com/{profile.github}
       </ExternalLink>
