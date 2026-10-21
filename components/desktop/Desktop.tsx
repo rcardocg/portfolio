@@ -80,19 +80,18 @@ export default function Desktop() {
     <div className="desktop">
       <a className="skip-link" href="#viewer">Ir a la información del portafolio</a>
       <header className="desktop-topbar">
-        <Link href="/" className="desktop-brand" aria-label="Inicio: escritorio de Ricardo"><span className="brand-symbol" aria-hidden="true">rc.</span><span>espacio de trabajo</span></Link>
+        <Link href="/" className="desktop-brand" aria-label="Inicio: escritorio de Ricardo"><span className="brand-symbol" aria-hidden="true">rc.</span></Link>
         <span className="desktop-location">{profile.location}</span>
       </header>
 
       <main className="desktop-main">
         <div className="desktop-intro">
-          <div><p className="eyebrow">~/portfolio</p><h1>{profile.name}</h1><p className="intro-description">{profile.role} <span aria-hidden="true">/</span> Ciencia de datos</p></div>
-          <p className="desktop-invitation"><span className="status-dot" aria-hidden="true" />Explora a tu ritmo.</p>
+          <div><h1>{profile.name}</h1><p className="intro-description">{profile.role} <span aria-hidden="true">/</span> Ciencia de datos</p></div>
         </div>
 
         <div className="desktop-layout">
           <section className="window terminal-window" aria-labelledby="terminal-title">
-            <div className="window-bar"><span className="window-mark" aria-hidden="true">&gt;_</span><h2 id="terminal-title">terminal <span className="window-path">— ~/portfolio</span></h2><span className="window-dots" aria-hidden="true">···</span></div>
+            <div className="window-bar"><span className="window-mark" aria-hidden="true">&gt;_</span><h2 id="terminal-title">terminal</h2><span className="window-dots" aria-hidden="true">···</span></div>
             <div className="terminal-log" ref={logRef} role="log" aria-label="Historial de la terminal" aria-live="polite" tabIndex={0}>
               <div className="terminal-welcome">
                 <p className="terminal-comment"># Una pequeña ventana a lo que hago.</p>
@@ -132,7 +131,7 @@ export default function Desktop() {
           </section>
         </div>
 
-        <footer className="desktop-footer"><span>Hecho para explorar, con o sin comandos.</span><Link href="/scary" className="scary-shortcut"><span aria-hidden="true">⌁</span> /scary <span className="scary-shortcut-note">una sesión pendiente</span></Link></footer>
+        <footer className="desktop-footer"><Link href="/scary" className="scary-shortcut"><span aria-hidden="true">⌁</span> /scary <span className="scary-shortcut-note">una sesión pendiente</span></Link></footer>
       </main>
     </div>
   );
