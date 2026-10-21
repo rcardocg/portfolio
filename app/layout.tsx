@@ -1,25 +1,16 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda } from "next/font/google";
+import { profile } from "@/data/profile";
 import "./globals.css";
 
-const bodoni = Bodoni_Moda({
-  variable: "--font-bodoni",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Ricardo Caballeros | Ingeniero en Sistemas",
-  description:
-    "Portafolio profesional de Ricardo Caballeros, Ingeniero en Sistemas.",
+  title: `${profile.name} | Ciencia de datos`,
+  description: "El escritorio de Ricardo Caballeros. Ingeniero en sistemas que trabaja en ciencia de datos. Explora su perfil, proyectos y una pequeña ficción interactiva.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="es"
-      className={`${bodoni.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="es" className="h-full antialiased">
+      <body>{children}</body>
     </html>
   );
 }
