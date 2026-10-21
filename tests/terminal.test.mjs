@@ -10,18 +10,19 @@ test('documented commands resolve, normalize input and only open intended views'
   }
   assert.equal(resolveCommand('clear').kind, 'clear');
   assert.equal(resolveCommand('ls').view, 'projects');
-  assert.equal(resolveCommand('open   sesion-pendiente').view, 'projects');
+  assert.equal(resolveCommand('open   projects/ted').view, 'projects');
   assert.equal(resolveCommand('cat about.md').view, 'about');
   assert.equal(resolveCommand('cat contact.txt').view, 'contact');
   assert.equal(new Set(completions).size, completions.length);
 });
 
-test('navigation is limited to the game and arbitrary shell or HTML is rejected', () => {
-  for (const command of ['/scary', 'SCARY', 'open /scary']) {
-    assert.equal(resolveCommand(command).kind, 'navigate');
-    assert.equal(resolveCommand(command).href, '/scary');
+test('ted opens inline and old commands or arbitrary shell and HTML are rejected', () => {
+  assert.deepEqual(commands.find(command => command.name === 'ted'), { name: 'ted', description: '???' });
+  for (const command of ['ted', '/ted', 'TED', 'open /ted']) {
+    assert.equal(resolveCommand(command).kind, 'view');
+    assert.equal(resolveCommand(command).view, 'ted');
   }
-  for (const command of ['', 'rm -rf /', '<script>alert(1)</script>', 'open https://example.com', 'about; contact', 'unknown']) {
+  for (const command of ['scary', '/scary', 'open /scary', '', 'rm -rf /', '<script>alert(1)</script>', 'open https://example.com', 'about; contact', 'unknown']) {
     assert.equal(resolveCommand(command).kind, 'error');
   }
 });

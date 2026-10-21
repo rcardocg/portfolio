@@ -1,22 +1,23 @@
 # Portfolio
 
-Portafolio de Ricardo Caballeros, ingeniero en sistemas que trabaja en ciencia de datos. Simula un escritorio con terminal guiada y un visor de archivos. Se puede navegar con comandos o botones, en móvil y escritorio.
+Ricardo Caballeros' portfolio. Systems engineer working in data science. A desktop-style interface with a terminal and file viewer, navigable with commands or buttons on mobile and desktop.
 
-## Uso
+## Usage
 
-- `help`: comandos disponibles.
-- `about`, `projects`, `contact`: abrir archivos en el visor.
-- `open sesion-pendiente`: ficha del juego.
-- `/scary`: entrar a la ficción interactiva «Sesión pendiente».
-- `clear`: limpiar la salida. ↑/↓ recorren el historial y Tab completa comandos inequívocos.
+- `help`: show available commands.
+- `about`, `projects`, `contact`: open files in the viewer.
+- `open projects/ted`: view project details.
+- `ted`: open AM's monologue. Its terminal description is `???`.
+- `clear`: clear the output. ↑/↓ browse command history and Tab completes unambiguous commands.
 
-`/scary` contiene una historia original de terror psicológico con tres decisiones, tres finales y 18 recorridos. No usa servicios externos, datos personales ni persistencia. Salir está siempre disponible; Escape vuelve al escritorio. La ficha del proyecto se puede compartir en `/projects/sesion-pendiente`.
+`ted` displays the supplied AM monologue from *I Have No Mouth, and I Must Scream* in three blocks. Lines appear gradually; “show block” skips the wait and “continue” advances. Restart or exit using the buttons, or press Escape to exit. Also available at `/ted`, with project details at `/projects/ted`. With reduced motion enabled, each block appears in full.
 
-## Desarrollo
+## Development
 
-Requiere Node.js 22.6 o posterior. `npm run dev` inicia el sitio, `npm run build` compila producción, `npm run lint` revisa el código y `npm test` comprueba los comandos y los recorridos narrativos.
+Requires Node.js 22.6 or later. `npm run dev` starts the site, `npm run build` builds for production, `npm run lint` checks the code, and `npm test` checks terminal commands.
 
-Perfil: `data/profile.ts`. Proyecto: `data/projects.ts`. Comandos: `lib/terminal.ts`. Narrativa: `lib/scary.ts`.
+Profile: `data/profile.ts`. Project: `data/projects.ts`. Commands: `lib/terminal.ts`. Monologue: `lib/ted.ts`.
 
-## Extra
-Proyecto en vercel
+## Hosting
+
+Hosted on Vercel.

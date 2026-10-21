@@ -1,23 +1,22 @@
 export const commands = [
-  { name: "help", description: "Ver los comandos disponibles" },
-  { name: "about", description: "Un poco sobre mí" },
-  { name: "projects", description: "Explorar proyectos" },
-  { name: "contact", description: "Correo y GitHub" },
-  { name: "clear", description: "Limpiar la terminal" },
-  { name: "/scary", description: "Una sesión que quedó abierta" },
+  { name: "help", description: "Show available commands" },
+  { name: "about", description: "A little about me" },
+  { name: "projects", description: "Browse projects" },
+  { name: "contact", description: "Email and GitHub" },
+  { name: "clear", description: "Clear the terminal" },
+  { name: "ted", description: "???" },
 ] as const;
 
 export const completions = [
   ...commands.map((command) => command.name),
-  "open sesion-pendiente",
+  "open projects/ted",
 ];
 
-export type View = "about" | "projects" | "contact";
+export type View = "about" | "projects" | "contact" | "ted";
 export type CommandResult =
   | { kind: "help"; text: string }
   | { kind: "view"; view: View; text: string }
   | { kind: "clear" }
-  | { kind: "navigate"; href: "/scary"; text: string }
   | { kind: "error"; text: string };
 
 export function resolveCommand(input: string): CommandResult {
@@ -25,26 +24,26 @@ export function resolveCommand(input: string): CommandResult {
 
   switch (command) {
     case "help":
-      return { kind: "help", text: "Elige un comando o escríbelo abajo. También puedes usar los archivos del visor." };
+      return { kind: "help", text: "Choose a command or type it below." };
     case "about":
     case "cat about.md":
-      return { kind: "view", view: "about", text: "Abierto: ~/about.md\nMi presentación está en el visor." };
+      return { kind: "view", view: "about", text: "~/about.md" };
     case "projects":
     case "ls":
     case "ls projects":
     case "cd projects":
-    case "open sesion-pendiente":
-      return { kind: "view", view: "projects", text: "Abierto: ~/projects/\nSesión pendiente — ficción interactiva de terror psicológico.\nSelecciona el proyecto en el visor para conocerlo o jugar." };
+    case "open projects/ted":
+      return { kind: "view", view: "projects", text: "~/projects/" };
     case "contact":
     case "cat contact.txt":
-      return { kind: "view", view: "contact", text: "Abierto: ~/contact.txt\nPuedes escribirme por correo o visitar mi GitHub desde el visor." };
+      return { kind: "view", view: "contact", text: "~/contact.txt" };
     case "clear":
       return { kind: "clear" };
-    case "/scary":
-    case "scary":
-    case "open /scary":
-      return { kind: "navigate", href: "/scary", text: "Abriendo una sesión pendiente…" };
+    case "/ted":
+    case "ted":
+    case "open /ted":
+      return { kind: "view", view: "ted", text: "~/ted" };
     default:
-      return { kind: "error", text: "No encontré ese comando. Prueba «help» o selecciona un acceso rápido." };
+      return { kind: "error", text: 'Command not found. Try "help" or choose a shortcut.' };
   }
 }

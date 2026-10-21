@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Monologue from "@/components/ted/Monologue";
 import ExternalLink from "@/components/ui/ExternalLink";
 import ProjectDetails from "@/components/desktop/ProjectDetails";
 import { profile } from "@/data/profile";
@@ -10,24 +9,25 @@ import { commands, completions, resolveCommand, type CommandResult, type View } 
 
 type Entry = { id: number; command: string; result: Exclude<CommandResult, { kind: "clear" }> };
 const files: { view: View; file: string; label: string }[] = [
-  { view: "about", file: "about.md", label: "Sobre mí" },
-  { view: "projects", file: "projects/", label: "Proyectos" },
-  { view: "contact", file: "contact.txt", label: "Contacto" },
+  { view: "about", file: "about.md", label: "About me" },
+  { view: "projects", file: "projects/", label: "Projects" },
+  { view: "contact", file: "contact.txt", label: "Contact" },
 ];
 
 export default function Desktop() {
-  const router = useRouter();
-  const [view, setView] = useState<View>("about");
   const [input, setInput] = useState("");
   const [entries, setEntries] = useState<Entry[]>([]);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const draftRef = useRef("");
   const entryId = useRef(0);
 
   useEffect(() => {
-    if (logRef.current) logRef.current.scrollTop = entries.length ? logRef.current.scrollHeight : 0;
+    if (entries.length) logRef.current?.lastElementChild?.scrollIntoView({ block: "start" });
+    const result = entries.at(-1)?.result;
+    if (result?.kind !== "view" || result.view !== "ted") inputRef.current?.focus({ preventScroll: true });
   }, [entries]);
 
   function execute(raw: string) {
@@ -43,8 +43,6 @@ export default function Desktop() {
     } else {
       const entry = { id: ++entryId.current, command, result };
       setEntries((previous) => [...previous, entry].slice(-40));
-      if (result.kind === "view") setView(result.view);
-      if (result.kind === "navigate") router.push(result.href);
     }
   }
 
@@ -74,65 +72,42 @@ export default function Desktop() {
     }
   }
 
-  const currentFile = files.find((file) => file.view === view)!;
-
   return (
-    <div className="desktop">
-      <a className="skip-link" href="#viewer">Ir a la información del portafolio</a>
-      <header className="desktop-topbar">
-        <Link href="/" className="desktop-brand" aria-label="Inicio: escritorio de Ricardo"><span className="brand-symbol" aria-hidden="true">rc.</span></Link>
-        <span className="desktop-location">{profile.location}</span>
-      </header>
-
-      <main className="desktop-main">
-        <div className="desktop-intro">
-          <div><h1>{profile.name}</h1><p className="intro-description">{profile.role} <span aria-hidden="true">/</span> Ciencia de datos</p></div>
-        </div>
-
-        <div className="desktop-layout">
-          <section className="window terminal-window" aria-labelledby="terminal-title">
-            <div className="window-bar"><span className="window-mark" aria-hidden="true">&gt;_</span><h2 id="terminal-title">terminal</h2><span className="window-dots" aria-hidden="true">···</span></div>
-            <div className="terminal-log" ref={logRef} role="log" aria-label="Historial de la terminal" aria-live="polite" tabIndex={0}>
+    <main className="terminal-screen" aria-label="Portfolio terminal">
+      <a className="skip-link" href="#command">Skip to command line</a>
               <div className="terminal-welcome">
-                <p className="terminal-comment"># Una pequeña ventana a lo que hago.</p>
-                <p>Hola, soy <span className="terminal-highlight">Ricardo</span>.</p>
+                <pre className="ascii-logo" aria-label="rc">{String.raw` _ __    ___
+| '__|  / __|
+| |    | (__
+|_|     \___|`}</pre>
+                <h1>{profile.name}</h1>
                 <p>{profile.role}.<br />{profile.description}</p>
-                <p className="muted">Puedes escribir un comando o elegir una opción.<br />Empieza por <button className="inline-command" onClick={() => execute("help")}>help</button> si quieres dar una vuelta.</p>
-                <div className="welcome-options">
-                  {files.map((file) => <button key={file.view} onClick={() => execute(file.view)}><span>{file.view}</span><span className="muted">{file.label}</span><span aria-hidden="true">↗</span></button>)}
+                <p className="muted">Type <button className="inline-command" onClick={() => execute("help")}>help</button> to see available commands.</p>
+                <div className="terminal-shortcuts" aria-label="Portfolio commands">
+                  {files.map((file) => <button key={file.view} onClick={() => execute(file.view)}><span>{file.view}</span><span className="muted">{file.label}</span></button>)}
                 </div>
               </div>
+            <div ref={logRef} role="log" aria-label="Terminal history" aria-live="polite">
               {entries.map((entry) => (
                 <div className="terminal-entry" key={entry.id}>
                   <p className="command-echo"><span aria-hidden="true">~ $</span> {entry.command}</p>
-                  <p className={entry.result.kind === "error" ? "command-output command-error" : "command-output"}>{entry.result.text}</p>
-                  {entry.result.kind === "help" && <div className="help-commands">{commands.map((command) => <button onClick={() => execute(command.name)} key={command.name}><span>{command.name}</span><span>{command.description}</span></button>)}<p className="terminal-comment">open sesion-pendiente · abrir la ficha del juego</p></div>}
-                  {entry.result.kind === "view" && <a className="terminal-view-link" href="#viewer">Ver en el visor <span aria-hidden="true">→</span></a>}
+                  {entry.result.kind !== "view" && <p className={entry.result.kind === "error" ? "command-output command-error" : "command-output"}>{entry.result.text}</p>}
+                  {entry.result.kind === "help" && <div className="help-commands">{commands.map((command) => <button onClick={() => execute(command.name)} key={command.name}><span>{command.name}</span><span>{command.description}</span></button>)}<p className="terminal-comment">open projects/ted · view project details</p></div>}
+                  {entry.result.kind === "view" && <div className="viewer-content terminal-result">
+                    {entry.result.view === "about" && <article className="about-file"><p className="eyebrow">about.md</p><h2>A little about me.</h2><p className="viewer-lead">I’m {profile.name}, a {profile.role.toLowerCase()}.</p><p>{profile.description}</p><dl className="profile-facts"><div><dt>Location</dt><dd>{profile.location}</dd></div><div><dt>Now</dt><dd>Data science</dd></div><div><dt>On the web</dt><dd><ExternalLink href={profile.githubUrl}>github.com/{profile.github} ↗</ExternalLink></dd></div></dl><button className="text-link" onClick={() => execute("projects")}>Browse projects</button></article>}
+                    {entry.result.view === "projects" && <ProjectDetails onPlay={() => execute("ted")} onDetails={() => execute("open projects/ted")} />}
+                    {entry.result.view === "ted" && <Monologue embedded onExit={() => { inputRef.current?.focus(); }} />}
+                    {entry.result.view === "contact" && <article className="contact-file"><p className="eyebrow">contact.txt</p><h2>Let’s talk.</h2><p className="viewer-lead">Have an idea, a project, or just want to say hello? Send me an email.</p><a className="contact-address" href={`mailto:${profile.email}`}>{profile.email}</a><p className="muted">Opens your email app.</p><div className="contact-github"><ExternalLink href={profile.githubUrl}>GitHub / {profile.github} ↗</ExternalLink></div></article>}
+                  </div>}
                 </div>
               ))}
             </div>
             <form className="terminal-input" onSubmit={submit}>
-              <label htmlFor="command" className="terminal-prompt"><span className="prompt-user">visitante</span><span>@ricardo</span><span className="prompt-path">:~$</span></label>
-              <input id="command" aria-label="Comando de terminal" aria-describedby="terminal-hint" autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={160} placeholder="escribe help…" value={input} onChange={(event) => { setInput(event.target.value); setHistoryIndex(null); draftRef.current = event.target.value; }} onKeyDown={handleKey} />
-              <button type="submit" className="command-submit" aria-label="Ejecutar comando">↵</button>
+              <label htmlFor="command" className="terminal-prompt"><span className="prompt-user">visitor</span><span>@ricardo</span><span className="prompt-path">:~$</span></label>
+              <input ref={inputRef} id="command" aria-label="Terminal command" aria-describedby="terminal-hint" autoComplete="off" autoCapitalize="none" spellCheck={false} maxLength={160} placeholder="type help…" value={input} onChange={(event) => { setInput(event.target.value); setHistoryIndex(null); draftRef.current = event.target.value; }} onKeyDown={handleKey} />
+              <button type="submit" className="command-submit" aria-label="Run command">↵</button>
             </form>
-            <div className="window-status" id="terminal-hint"><span>↑ ↓ historial <span aria-hidden="true">·</span> Tab completar</span><span>listo<span className="status-dot" aria-hidden="true" /></span></div>
-          </section>
-
-          <section className="window viewer-window" id="viewer" aria-labelledby="viewer-title" tabIndex={-1}>
-            <div className="window-bar"><span className="window-mark" aria-hidden="true">~/</span><h2 id="viewer-title">visor <span className="window-path">— {currentFile.file}</span></h2><span className="window-dots" aria-hidden="true">···</span></div>
-            <nav className="file-tabs" aria-label="Archivos del portafolio">{files.map((file) => <button key={file.view} aria-pressed={view === file.view} onClick={() => setView(file.view)}>{file.file}</button>)}</nav>
-            <div className="viewer-content">
-              {view === "about" && <article className="about-file"><p className="eyebrow">about.md</p><div className="profile-monogram" aria-hidden="true">RC<span>_</span></div><h2>Un poco sobre mí.</h2><p className="viewer-lead">Soy {profile.name}, {profile.role.toLowerCase()}.</p><p>{profile.description} Aquí puedes conocerme, explorar mis proyectos y ponerte en contacto conmigo.</p><dl className="profile-facts"><div><dt>Ubicación</dt><dd>{profile.location}</dd></div><div><dt>Ahora</dt><dd>Ciencia de datos</dd></div><div><dt>En la web</dt><dd><ExternalLink href={profile.githubUrl}>github.com/{profile.github} ↗</ExternalLink></dd></div></dl><button className="text-link" onClick={() => execute("projects")}>Explorar proyectos <span aria-hidden="true">→</span></button></article>}
-              {view === "projects" && <ProjectDetails />}
-              {view === "contact" && <article className="contact-file"><p className="eyebrow">contact.txt</p><h2>Sigamos la conversación.</h2><p className="viewer-lead">Si tienes una idea, un proyecto o simplemente quieres saludar, puedes escribirme.</p><a className="contact-address" href={`mailto:${profile.email}`}>{profile.email} <span aria-hidden="true">↗</span></a><p className="muted">Se abrirá tu aplicación de correo.</p><div className="contact-github"><span className="eyebrow">También en</span><ExternalLink href={profile.githubUrl}>GitHub / {profile.github} ↗</ExternalLink></div></article>}
-            </div>
-            <div className="window-status"><span>{currentFile.file}</span><span>lectura pública</span></div>
-          </section>
-        </div>
-
-        <footer className="desktop-footer"><Link href="/scary" className="scary-shortcut"><span aria-hidden="true">⌁</span> /scary <span className="scary-shortcut-note">una sesión pendiente</span></Link></footer>
-      </main>
-    </div>
+      <div className="terminal-hint" id="terminal-hint"><span>↑ ↓ history · Tab complete</span><button onClick={() => execute("ted")}>ted</button></div>
+    </main>
   );
 }
