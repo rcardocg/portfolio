@@ -14,7 +14,7 @@ const files: { view: View; file: string; label: string }[] = [
   { view: "contact", file: "contact.txt", label: "Contact" },
 ];
 
-export default function Desktop() {
+export default function Desktop({ logo }: { logo: string }) {
   const [input, setInput] = useState("");
   const [entries, setEntries] = useState<Entry[]>([]);
   const [history, setHistory] = useState<string[]>([]);
@@ -76,10 +76,7 @@ export default function Desktop() {
     <main className="terminal-screen" aria-label="Portfolio terminal">
       <a className="skip-link" href="#command">Skip to command line</a>
               <div className="terminal-welcome">
-                <pre className="ascii-logo" aria-label="rc">{String.raw` _ __    ___
-| '__|  / __|
-| |    | (__
-|_|     \___|`}</pre>
+                <pre className="ascii-logo" role="img" aria-label="ASCII sheep logo">{logo}</pre>
                 <h1>{profile.name}</h1>
                 <p>{profile.role}.<br />{profile.description}</p>
                 <p className="muted">Type <button className="inline-command" onClick={() => execute("help")}>help</button> to see available commands.</p>

@@ -47,7 +47,7 @@ a { color: inherit; }
 .window-bar { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 6px 16px; border-bottom: 1px solid var(--border); color: var(--foreground); font-size: 12px; }
 .window-bar h2 { min-width: 0; overflow: hidden; font: inherit; text-overflow: ellipsis; white-space: nowrap; }
 .window-mark { flex-shrink: 0; color: var(--accent); }
-.ascii-logo { margin: 0 0 24px; color: var(--accent); font: inherit; font-size: clamp(16px, 2vw, 24px); line-height: 1.1; white-space: pre; }
+.ascii-logo { margin: 0 0 24px; color: var(--accent); font: inherit; font-size: clamp(8px, 2vw, 12px); line-height: 1; letter-spacing: 0; font-variant-ligatures: none; white-space: pre; }
 .terminal-welcome h1 { margin-bottom: 8px; font-size: 14px; font-weight: 700; }
 .terminal-welcome > p { margin-bottom: 16px; }
 .terminal-comment { color: var(--muted); font-size: 11px; }
@@ -126,7 +126,7 @@ a { color: inherit; }
 
 @media (max-width: 760px) {
   .viewer-content { padding: 16px; }
-  .ascii-logo { font-size: 16px; margin-bottom: 16px; }
+  .ascii-logo { margin-bottom: 16px; }
   .terminal-input { gap: 10px; }
   .terminal-input input { font-size: 16px; }
   .terminal-prompt { font-size: 10px; }
